@@ -1,0 +1,11 @@
+,Stampede 2 Skylake,Stampede 2 KNL,Cori,Piz Daint,Titan
+CPU model,2 x Xeon Platinum 8160,Xeon Phi 7250,Xeon Phi 7250,Xeon  E5-2690 v3,Opteron 6274
+GPU model,-,-,-,Tesla P100,Tesla K20x
+Threads/node,96,272 (128 used),272 (128 used),24 (12 used) + 3584,16 + 2688
+TFLOPS/node,3.5,3,3,4.5 (0.5+4.0),1.5 (0.2+1.3)
+Max. Nodes,1736,4200,9668,5320,18688
+Interconnect,Intel Omni-Path,Intel Omni-Path,Cray Aries,Cray Aries,Cray Gemini
+Net. Topology,Fat Tree,Fat Tree,Dragonfly,Dragonfly,3D Torus
+Compiler,Intel Fortran 17,Intel Fortran 17,Intel Fortran 17,PGI Fortran 17,PGI Fortran 17
+FFT library,Intel MKL,Intel MKL,FFTW v3.3.6,cuFFT,cuFFT
+MPI library,MPICH v7.6,MPICH v7.6,Cray MPICH v7.6,Cray MPICH v7.6,Cray MPICH v7.6
