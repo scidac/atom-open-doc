@@ -1,0 +1,785 @@
+diff --git a/cgyro/src/cgyro_error_estimate.F90 b/cgyro/src/cgyro_error_estimate.F90
+index 56c2cd13..319f98de 100644
+--- a/cgyro/src/cgyro_error_estimate.F90
++++ b/cgyro/src/cgyro_error_estimate.F90
+@@ -22,21 +22,22 @@ subroutine cgyro_error_estimate
+   real, dimension(2) :: error_loc
+ 
+   real :: norm_loc_s,error_loc_s,h_s,r_s
+ 
+ #ifdef _OPENACC
+   ! launch Estimate of collisionless error via 3rd-order linear estimate async ahead of time on GPU
+   ! CPU-only code will work on it later
+   ! NOTE: If I have multiple itor, sum them all together
+   h_s=0.0
+   r_s=0.0
+-!$acc parallel loop collapse(3) independent present(h_x,rhs(:,:,:,1)) reduction(+:h_s,r_s) async(2)
++!$acc parallel loop collapse(3) independent gang vector &
++!$acc&         present(h_x,rhs(:,:,:,1)) reduction(+:h_s,r_s) async(2)
+   do itor=nt1,nt2
+    do iv_loc=1,nv_loc
+      do ic=1,nc
+         h_s = h_s + abs(h_x(ic,iv_loc,itor))
+         r_s = r_s + abs(rhs(ic,iv_loc,itor,1))
+      enddo
+    enddo
+   enddo
+ #endif
+ 
+diff --git a/cgyro/src/cgyro_field.F90 b/cgyro/src/cgyro_field.F90
+index 48d23d67..9d3960d7 100644
+--- a/cgyro/src/cgyro_field.F90
++++ b/cgyro/src/cgyro_field.F90
+@@ -162,21 +162,22 @@ subroutine cgyro_field_v_notae_s_gpu(start_t)
+   integer :: i_f,itor
+   complex :: field_loc_l 
+ 
+   call timer_lib_in('field')
+ !$acc data present(cap_h_v)
+ !$acc data present(field,field_loc)
+ 
+ 
+   ! Poisson and Ampere RHS integrals of H
+ 
+-!$acc parallel loop collapse(3) independent copyin(start_t) &
++!$acc parallel loop collapse(3) gang vector &
++!$acc&         independent copyin(start_t) &
+ !$acc&         present(nt2,nc,n_field) default(none)
+   do itor=start_t,nt2
+    do ic=1,nc
+        do i_f=1,n_field
+         field_loc(i_f,ic,itor) = (0.0,0.0)
+        enddo
+    enddo
+   enddo
+ 
+ !$acc parallel loop collapse(3) gang private(ic_loc,field_loc_l) copyin(start_t) &
+@@ -217,21 +218,22 @@ subroutine cgyro_field_v_notae_s_gpu(start_t)
+ #ifdef DISABLE_GPUDIRECT_MPI
+ !$acc update device(field(:,:,start_t:nt2))
+ #else
+ !$acc end host_data
+ #endif
+ 
+   call timer_lib_out('field_com')
+ 
+   call timer_lib_in('field')
+   ! Poisson LHS factors
+-!$acc parallel loop collapse(3) independent present(fcoef) copyin(start_t) &
++!$acc parallel loop collapse(3) gang vector &
++!$acc&         independent present(fcoef) copyin(start_t) &
+ !$acc&         present(nt2,nc,n_field) default(none)
+   do itor=start_t,nt2
+      ! assuming  (.not.(itor == 0 .and. ae_flag == 1))
+      do ic=1,nc
+        do i_f=1,n_field
+         field(i_f,ic,itor) = fcoef(i_f,ic,itor)*field(i_f,ic,itor)
+        enddo
+      enddo
+   enddo
+ 
+@@ -436,21 +438,22 @@ subroutine cgyro_field_c_gpu
+   complex :: tmp,field_loc_l
+   complex :: my_psi
+ 
+   call timer_lib_in('field')
+ !$acc data present(h_x,cap_h_c)
+ 
+ !$acc data present(field,field_loc)
+ 
+   ! Poisson and Ampere RHS integrals of h
+ 
+-!$acc parallel loop collapse(3) independent private(field_loc_l) &
++!$acc parallel loop collapse(3) gang vector &
++!$acc&         independent private(field_loc_l) &
+ !$acc&         present(dvjvec_c) present(nt1,nt2,nc,n_field,nv1,nv2) default(none)
+   do itor=nt1,nt2
+    do ic=1,nc
+     do i_f=1,n_field
+       field_loc_l = (0.0,0.0)    
+ !$acc loop seq private(iv_loc)
+       do iv=nv1,nv2
+          iv_loc = iv-nv1+1
+          field_loc_l = field_loc_l+dvjvec_c(i_f,ic,iv_loc,itor)*h_x(ic,iv_loc,itor)
+       enddo
+@@ -477,21 +480,22 @@ subroutine cgyro_field_c_gpu
+ 
+ #ifdef DISABLE_GPUDIRECT_MPI
+ !$acc update device(field)
+ #else
+ !$acc end host_data
+ #endif
+ 
+   call timer_lib_out('field_com')
+   call timer_lib_in('field')
+   if (n_field > 2) then
+-!$acc parallel loop collapse(2) independent present(fcoef) &
++!$acc parallel loop collapse(2) gang vector &
++!$acc&         independent present(fcoef) &
+ !$acc&         present(nt1,nt2,nc) default(none)
+     do itor=nt1,nt2
+       do ic=1,nc
+        field(3,ic,itor) = field(3,ic,itor)*fcoef(3,ic,itor)
+       enddo
+      enddo
+   endif
+ 
+   ! Poisson LHS factors
+   itor1=nt1
+@@ -501,34 +505,36 @@ subroutine cgyro_field_c_gpu
+     ! Note: Called rarely, use the CPu version
+ !$acc update host(field)
+     call cgyro_field_ae('c')
+ !$acc update device(field)
+     ! mark we already processed ==0, nothing else to do there
+     itor1=1
+   endif
+ 
+   if (itor1<=itor2) then
+      if (n_field > 2) then
+-!$acc parallel loop collapse(2) independent private(tmp) present(gcoef) &
++!$acc parallel loop collapse(2) gang vector &
++!$acc&         independent private(tmp) present(gcoef) &
+ !$acc&         copyin(itor1,itor2) present(nc) default(none)
+         do itor=itor1,itor2
+          do ic=1,nc
+           tmp = field(1,ic,itor)
+           field(1,ic,itor) = gcoef(1,ic,itor)*field(1,ic,itor)+ &
+                   gcoef(4,ic,itor)*field(3,ic,itor)
+           field(2,ic,itor) = gcoef(2,ic,itor)*field(2,ic,itor)
+           field(3,ic,itor) = gcoef(3,ic,itor)*field(3,ic,itor)+ &
+                   gcoef(5,ic,itor)*tmp
+          enddo
+         enddo
+      else
+-!$acc parallel loop collapse(3) independent present(gcoef) &
++!$acc parallel loop collapse(3) gang vector &
++!$acc&         independent present(gcoef) &
+ !$acc&         copyin(itor1,itor2) present(nc,n_field) default(none)
+         do itor=itor1,itor2
+          do ic=1,nc
+           do i_f=1,n_field
+             field(i_f,ic,itor) = gcoef(i_f,ic,itor)*field(i_f,ic,itor)
+           enddo
+          enddo
+         enddo
+      endif
+   endif
+@@ -563,21 +569,22 @@ subroutine cgyro_field_c_ae_gpu
+   complex :: tmp,field_loc_l
+   complex :: my_psi
+ 
+   call timer_lib_in('field')
+ !$acc data present(h_x,cap_h_c)
+ 
+ !$acc data present(field,field_loc)
+ 
+   ! Poisson and Ampere RHS integrals of h
+ 
+-!$acc parallel loop collapse(3) independent private(field_loc_l) &
++!$acc parallel loop collapse(3) gang vector &
++!$acc&         independent private(field_loc_l) &
+ !$acc&         present(dvjvec_c) present(nc,n_field,nv1,nv2) default(none)
+   do itor=0,0
+    do ic=1,nc
+     do i_f=1,n_field
+       field_loc_l = (0.0,0.0)    
+ !$acc loop seq private(iv_loc)
+       do iv=nv1,nv2
+          iv_loc = iv-nv1+1
+          field_loc_l = field_loc_l+dvjvec_c(i_f,ic,iv_loc,itor)*h_x(ic,iv_loc,itor)
+       enddo
+@@ -604,21 +611,22 @@ subroutine cgyro_field_c_ae_gpu
+ 
+ #ifdef DISABLE_GPUDIRECT_MPI
+ !$acc update device(field(:,:,0:0))
+ #else
+ !$acc end host_data
+ #endif
+ 
+   call timer_lib_out('field_com')
+   call timer_lib_in('field')
+   if (n_field > 2) then
+-!$acc parallel loop collapse(2) independent present(fcoef) present(nc) default(none)
++!$acc parallel loop collapse(2) gang vector &
++!$acc&         independent present(fcoef) present(nc) default(none)
+     do itor=0,0
+       do ic=1,nc
+        field(3,ic,itor) = field(3,ic,itor)*fcoef(3,ic,itor)
+       enddo
+      enddo
+   endif
+   ! Poisson LHS factors
+   ! Note: Called rarely, use the CPU version
+ !$acc update host(field(:,:,0:0))
+     call cgyro_field_ae('c')
+diff --git a/cgyro/src/cgyro_math.F90 b/cgyro/src/cgyro_math.F90
+index e3b34310..17fc5718 100644
+--- a/cgyro/src/cgyro_math.F90
++++ b/cgyro/src/cgyro_math.F90
+@@ -19,21 +19,22 @@ subroutine cgyro_cmpl_copy(sz, left, r1)
+     !-------------------------------------------------------
+     implicit none
+     !
+     integer, intent(in) :: sz
+     complex, intent(out), dimension(*) :: left
+     complex, intent(in), dimension(*) :: r1
+     !
+     integer :: i
+     !-------------------------------------------------------
+ #ifdef _OPENACC
+-!$acc parallel loop independent present(left,r1)
++!$acc parallel loop independent gang vector &
++!$acc&         present(left,r1)
+     do i=1,sz
+        left(i) = r1(i)
+     enddo
+ #else
+ !$omp parallel do 
+     do i=1,sz
+        left(i) = r1(i)
+     enddo
+ #endif
+ end subroutine cgyro_cmpl_copy
+@@ -44,21 +45,22 @@ subroutine cgyro_cmpl_copy2(sz, left1, left2, r1)
+     !
+     integer, intent(in) :: sz
+     complex, intent(out), dimension(*) :: left1
+     complex, intent(out), dimension(*) :: left2
+     complex, intent(in), dimension(*) :: r1
+     !
+     integer :: i
+     complex :: tmp
+     !-------------------------------------------------------
+ #ifdef _OPENACC
+-!$acc parallel loop independent present(left1,left2,r1) private(tmp)
++!$acc parallel loop independent gang vector &
++!$acc&         present(left1,left2,r1) private(tmp)
+     do i=1,sz
+        tmp = r1(i)
+        left1(i) = tmp
+        left2(i) = tmp
+     enddo
+ #else
+ !$omp parallel do private(tmp)
+     do i=1,sz
+        tmp = r1(i)
+        left1(i) = tmp
+@@ -82,33 +84,35 @@ subroutine cgyro_cmpl_fma2(sz, left, r1, c2, r2, abssum)
+     complex, intent(in), dimension(*) :: r2
+     real, intent(inout), optional :: abssum
+     !
+     integer :: i
+     complex :: tmp
+     real :: s
+     !-------------------------------------------------------
+     if (present(abssum)) then
+       s = 0.0
+ #ifdef _OPENACC
+-!$acc parallel loop independent present(left,r1,r2) private(tmp) reduction(+:s)
++!$acc parallel loop independent gang vector &
++!$acc&         present(left,r1,r2) private(tmp) reduction(+:s)
+ #else
+ !$omp parallel do private(tmp) reduction(+:s)
+ #endif
+       do i=1,sz
+         tmp = r1(i) + c2 * r2(i)
+         left(i) = tmp
+         s = s + abs(tmp)
+       enddo
+       abssum = s
+     else
+ #ifdef _OPENACC
+-!$acc parallel loop independent present(left,r1,r2)
++!$acc parallel loop independent gang vector &
++!$acc&         present(left,r1,r2)
+ #else
+ !$omp parallel do
+ #endif
+       do i=1,sz
+         left(i) = r1(i) + c2 * r2(i)
+       enddo
+     endif
+ end subroutine cgyro_cmpl_fma2
+ 
+ subroutine cgyro_cmpl_fma3(sz, left, r1, c2, r2, c3, r3, abssum)
+@@ -124,33 +128,35 @@ subroutine cgyro_cmpl_fma3(sz, left, r1, c2, r2, c3, r3, abssum)
+     complex, intent(in), dimension(*) :: r3
+     real, intent(inout), optional :: abssum
+     !
+     integer :: i
+     complex :: tmp
+     real :: s
+     !-------------------------------------------------------
+     if (present(abssum)) then
+       s = 0.0
+ #ifdef _OPENACC
+-!$acc parallel loop independent present(left,r1,r2,r3) private(tmp) reduction(+:s)
++!$acc parallel loop independent gang vector &
++!$acc&         present(left,r1,r2,r3) private(tmp) reduction(+:s)
+ #else
+ !$omp parallel do private(tmp) reduction(+:s)
+ #endif
+       do i=1,sz
+         tmp = r1(i) + c2 * r2(i) + c3 * r3(i)
+         left(i) = tmp
+         s = s + abs(tmp)
+       enddo
+       abssum = s
+     else
+ #ifdef _OPENACC
+-!$acc parallel loop independent present(left,r1,r2,r3)
++!$acc parallel loop independent gang vector &
++!$acc&         present(left,r1,r2,r3)
+ #else
+ !$omp parallel do
+ #endif
+       do i=1,sz
+         left(i) = r1(i) + c2 * r2(i) + c3 * r3(i)
+       enddo
+     endif
+ end subroutine cgyro_cmpl_fma3
+ 
+ subroutine cgyro_cmpl_fma4(sz, left, r1, c2, r2, c3, r3, c4, r4, abssum)
+@@ -168,33 +174,35 @@ subroutine cgyro_cmpl_fma4(sz, left, r1, c2, r2, c3, r3, c4, r4, abssum)
+     complex, intent(in), dimension(*) :: r4
+     real, intent(inout), optional :: abssum
+     !
+     integer :: i
+     complex :: tmp
+     real :: s
+     !-------------------------------------------------------
+     if (present(abssum)) then
+       s = 0.0
+ #ifdef _OPENACC
+-!$acc parallel loop independent present(left,r1,r2,r3,r4) private(tmp) reduction(+:s)
++!$acc parallel loop independent gang vector &
++!$acc&         present(left,r1,r2,r3,r4) private(tmp) reduction(+:s)
+ #else
+ !$omp parallel do private(tmp) reduction(+:s)
+ #endif
+       do i=1,sz
+         tmp = r1(i) + c2 * r2(i) + c3 * r3(i)+ c4 * r4(i)
+         left(i) = tmp
+         s = s + abs(tmp)
+       enddo
+       abssum = s
+     else
+ #ifdef _OPENACC
+-!$acc parallel loop independent present(left,r1,r2,r3,r4)
++!$acc parallel loop independent gang vector &
++!$acc&         present(left,r1,r2,r3,r4)
+ #else
+ !$omp parallel do
+ #endif
+       do i=1,sz
+         left(i) = r1(i) + c2 * r2(i) + c3 * r3(i)+ c4 * r4(i)
+       enddo
+     endif
+ end subroutine cgyro_cmpl_fma4
+ 
+ subroutine cgyro_cmpl_fma5(sz, left, r1, c2, r2, c3, r3, c4, r4, c5, r5, abssum)
+@@ -214,33 +222,35 @@ subroutine cgyro_cmpl_fma5(sz, left, r1, c2, r2, c3, r3, c4, r4, c5, r5, abssum)
+     complex, intent(in), dimension(*) :: r5
+     real, intent(inout), optional :: abssum
+     !
+     integer :: i
+     complex :: tmp
+     real :: s
+     !-------------------------------------------------------
+     if (present(abssum)) then
+       s = 0.0
+ #ifdef _OPENACC
+-!$acc parallel loop independent present(left,r1,r2,r3,r4,r5) private(tmp) reduction(+:s)
++!$acc parallel loop independent gang vector &
++!$acc&         present(left,r1,r2,r3,r4,r5) private(tmp) reduction(+:s)
+ #else
+ !$omp parallel do private(tmp) reduction(+:s)
+ #endif
+       do i=1,sz
+         tmp = r1(i) + c2 * r2(i) + c3 * r3(i)+ c4 * r4(i) + c5 * r5(i)
+         left(i) = tmp
+         s = s + abs(tmp)
+       enddo
+       abssum = s
+     else
+ #ifdef _OPENACC
+-!$acc parallel loop independent present(left,r1,r2,r3,r4,r5)
++!$acc parallel loop independent gang vector &
++!$acc&         present(left,r1,r2,r3,r4,r5)
+ #else
+ !$omp parallel do
+ #endif
+       do i=1,sz
+         left(i) = r1(i) + c2 * r2(i) + c3 * r3(i)+ c4 * r4(i) + c5 * r5(i)
+       enddo
+     endif
+ end subroutine cgyro_cmpl_fma5
+ 
+ subroutine cgyro_cmpl_fma6(sz, left, r1, c2, r2, c3, r3, c4, r4, c5, r5, c6, r6, abssum)
+@@ -262,33 +272,35 @@ subroutine cgyro_cmpl_fma6(sz, left, r1, c2, r2, c3, r3, c4, r4, c5, r5, c6, r6,
+     complex, intent(in), dimension(*) :: r6
+     real, intent(inout), optional :: abssum
+     !
+     integer :: i
+     complex :: tmp
+     real :: s
+     !-------------------------------------------------------
+     if (present(abssum)) then
+       s = 0.0
+ #ifdef _OPENACC
+-!$acc parallel loop independent present(left,r1,r2,r3,r4,r5,r6) private(tmp) reduction(+:s)
++!$acc parallel loop independent gang vector &
++!$acc&         present(left,r1,r2,r3,r4,r5,r6) private(tmp) reduction(+:s)
+ #else
+ !$omp parallel do private(tmp) reduction(+:s)
+ #endif
+       do i=1,sz
+         tmp = r1(i) + c2 * r2(i) + c3 * r3(i)+ c4 * r4(i) + c5 * r5(i) + c6 * r6(i)
+         left(i) = tmp
+         s = s + abs(tmp)
+       enddo
+       abssum = s
+     else
+ #ifdef _OPENACC
+-!$acc parallel loop independent present(left,r1,r2,r3,r4,r5,r6)
++!$acc parallel loop independent gang vector &
++!$acc&         present(left,r1,r2,r3,r4,r5,r6)
+ #else
+ !$omp parallel do
+ #endif
+       do i=1,sz
+         left(i) = r1(i) + c2 * r2(i) + c3 * r3(i)+ c4 * r4(i) + c5 * r5(i) + c6 * r6(i)
+       enddo
+     endif
+ end subroutine cgyro_cmpl_fma6
+ 
+ ! rN should logically be (sz,nr) in size,
+@@ -304,37 +316,39 @@ subroutine cgyro_cmpl_fmaN(sz, nr, left, r1, cN, rN, abssum)
+     complex, intent(in), dimension(*) :: rN
+     real, intent(inout), optional :: abssum
+     !
+     integer :: i,j
+     complex :: tmp
+     real :: s
+     !-------------------------------------------------------
+     if (present(abssum)) then
+       s = 0.0
+ #ifdef _OPENACC
+-!$acc parallel loop independent present(left,r1,rN) copyin(cN) private(tmp,j) reduction(+:s)
++!$acc parallel loop independent gang vector &
++!$acc&         present(left,r1,rN) copyin(cN) private(tmp,j) reduction(+:s)
+ #else
+ !$omp parallel do private(tmp,j) reduction(+:s)
+ #endif
+       do i=1,sz
+         tmp = r1(i)
+ !$acc loop seq
+         do j=1,nr
+            tmp = tmp + cN(j) * rN((j-1)*sz+i)
+         enddo
+         left(i) = tmp
+         s = s + abs(tmp)
+       enddo
+       abssum = s
+     else
+ #ifdef _OPENACC
+-!$acc parallel loop independent present(left,r1,rN) copyin(cN) private(tmp,j)
++!$acc parallel loop independent gang vector &
++!$acc&         present(left,r1,rN) copyin(cN) private(tmp,j)
+ #else
+ !$omp parallel do private(tmp,j)
+ #endif
+       do i=1,sz
+         tmp = r1(i)
+ !$acc loop seq
+         do j=1,nr
+            tmp = tmp + cN(j) * rN((j-1)*sz+i)
+         enddo
+         left(i) = tmp
+@@ -364,21 +378,23 @@ subroutine cgyro_cmpl_solution_werror(sz, nr, left, r0, c1, m1, cN, rN, ec1, ecN
+     real, intent(inout) :: abssum_left
+     real, intent(inout) :: abssum_m
+     !
+     integer :: i,j
+     complex :: tmp, tmpl, tmpm
+     real :: sl,sm
+     !-------------------------------------------------------
+     sl = 0.0
+     sm = 0.0
+ #ifdef _OPENACC
+-!$acc parallel loop independent present(left,r0,m1,rN) copyin(cN,ecN) private(tmp,tmpl,tmpm,j) reduction(+:sl,sm)
++!$acc parallel loop independent gang vector &
++!$acc&         present(left,r0,m1,rN) copyin(cN,ecN) private(tmp,tmpl,tmpm,j) &
++!$acc&         reduction(+:sl,sm)
+ #else
+ !$omp parallel do private(tmp,tmpl,tmpm,j) reduction(+:sl,sm)
+ #endif
+     do i=1,sz
+        ! compute solution using FMA of r0,m1 and rN using c -> left
+        ! also FMA of m1 and rN using ec -> m1
+        tmp = m1(i)
+        tmpl = r0(i) + c1 * tmp
+        tmpm = ec1*tmp
+ !$acc loop seq private(tmp)
+diff --git a/cgyro/src/cgyro_nl_comm.F90 b/cgyro/src/cgyro_nl_comm.F90
+index 980179b1..807f92a7 100644
+--- a/cgyro/src/cgyro_nl_comm.F90
++++ b/cgyro/src/cgyro_nl_comm.F90
+@@ -46,21 +46,22 @@ subroutine cgyro_nl_fftw_comm1_async
+     do itor=nt1,nt2
+      do ir=1,n_radial
+        iexch = iv_loc_m + (it-1)*nv_loc
+        fpack(ir,itor-nt1+1,iexch) = h_x(ic_c(ir,it),iv_loc_m,itor)
+      enddo
+     enddo
+    enddo
+   enddo
+ 
+ #ifdef _OPENACC
+-!$acc parallel loop independent present(fpack) if ( (nv_loc*n_theta) < (nsplit*n_toroidal_procs) )
++!$acc parallel loop independent gang vector &
++!$acc&         present(fpack) if ( (nv_loc*n_theta) < (nsplit*n_toroidal_procs) )
+ #endif
+   do iexch=nv_loc*n_theta+1,nsplit*n_toroidal_procs
+       fpack(1:n_radial,1:nt_loc,iexch) = (0.0,0.0)
+   enddo
+ 
+   call parallel_slib_f_nc_async(fpack,f_nl,f_req)
+ 
+   call timer_lib_out('nl_mem')
+ 
+ end subroutine cgyro_nl_fftw_comm1_async
+diff --git a/cgyro/src/cgyro_nl_fftw.gpu.F90 b/cgyro/src/cgyro_nl_fftw.gpu.F90
+index b00c492f..6abbd5a8 100644
+--- a/cgyro/src/cgyro_nl_fftw.gpu.F90
++++ b/cgyro/src/cgyro_nl_fftw.gpu.F90
+@@ -11,41 +11,43 @@
+ !-----------------------------------------------------------------
+ 
+ subroutine cgyro_nl_fftw_zero4(sz,v1,v2,v3,v4)
+   implicit none
+ 
+   integer, intent(in) :: sz
+   complex, dimension(*), intent(inout) :: v1,v2,v3,v4
+ 
+   integer :: i
+ 
+-!$acc parallel loop independent present(v1,v2,v3,v4) private(i)
++!$acc parallel loop independent gang vector &
++!$acc&         present(v1,v2,v3,v4) private(i)
+   do i=1,sz
+     v1(i) = 0.0
+     v2(i) = 0.0
+     v3(i) = 0.0
+     v4(i) = 0.0
+   enddo
+ 
+ end subroutine
+ 
+ subroutine cgyro_nl_fftw_mul(sz,uvm,uxm,vym,uym,vxm,inv_nxny)
+   implicit none
+ 
+   integer, intent(in) :: sz
+   real, dimension(*),intent(out) :: uvm
+   real, dimension(*),intent(in) :: uxm,vym,uym,vxm
+   real, intent(in) :: inv_nxny
+ 
+   integer :: i
+ 
+-!$acc parallel loop independent present(uvm,uxm,vym,uym,vxm) private(i)
++!$acc parallel loop independent gang vector &
++!$acc&         present(uvm,uxm,vym,uym,vxm) private(i)
+   do i=1,sz
+     uvm(i) = (uxm(i)*vym(i)-uym(i)*vxm(i))*inv_nxny
+   enddo
+ 
+ end subroutine
+ 
+ subroutine cgyro_nl_fftw(ij)
+ 
+ #ifdef HIPGPU
+   use hipfort_hipfft
+@@ -278,21 +280,22 @@ subroutine cgyro_nl_fftw(ij)
+ !$acc wait
+ !$acc end host_data
+ !$acc wait
+ 
+   call timer_lib_out('nl')
+   call timer_lib_in('nl_mem')
+ 
+   ! NOTE: The FFT will generate an unwanted n=0,p=-nr/2 component
+   ! that will be filtered in the main time-stepping loop
+ 
+-!$acc parallel loop independent collapse(4) private(itor,ix,iy) present(f_nl,fxmany)
++!$acc parallel loop independent collapse(4) gang vector &
++!$acc&         private(itor,ix,iy) present(f_nl,fxmany)
+   do itm=1,n_toroidal_procs
+      do itl=1,nt_loc
+        do j=1,nsplit
+          do ir=1,n_radial 
+            itor=itl + (itm-1)*nt_loc
+            ix = ir-1-nx0/2
+            if (ix < 0) ix = ix+nx
+ 
+            iy = itor-1
+            f_nl(ir,itl,j,itm) = fxmany(iy,ix,j)
+diff --git a/cgyro/src/cgyro_parallel_lib.F90 b/cgyro/src/cgyro_parallel_lib.F90
+index 0f0f6031..a3216b8b 100644
+--- a/cgyro/src/cgyro_parallel_lib.F90
++++ b/cgyro/src/cgyro_parallel_lib.F90
+@@ -276,22 +276,23 @@ contains
+ 
+     use mpi
+ 
+     implicit none
+ 
+     complex, intent(in), dimension(:,:,:) :: fin
+     integer :: j_loc,i,j,k,j1,j2,itor
+ 
+     j1 = 1+iproc*nj_loc
+     j2 = (1+iproc)*nj_loc
+-!$acc parallel loop collapse(4) independent private(j_loc) &
+-!$acc&         present(fsendr,fin) present(nproc,nk1,nk2,ni_loc) copyin(j1,j2) default(none)
++!$acc parallel loop collapse(4) gang vector independent private(j_loc) &
++!$acc&         present(fsendr,fin) present(nproc,nk1,nk2,ni_loc) &
++!$acc&         copyin(j1,j2) default(none)
+     do k=1,nproc
+      do itor=nk1,nk2
+        do j=j1,j2
+           do i=1,ni_loc
+              j_loc = j-j1+1
+              fsendr(i,itor,j_loc,k) = fin(i+(k-1)*ni_loc,j_loc,1+(itor-nk1))
+           enddo
+        enddo
+      enddo
+     enddo
+diff --git a/cgyro/src/cgyro_rhs.gpu.f90 b/cgyro/src/cgyro_rhs.gpu.f90
+index 6f60a36a..a5885a79 100644
+--- a/cgyro/src/cgyro_rhs.gpu.f90
++++ b/cgyro/src/cgyro_rhs.gpu.f90
+@@ -56,21 +56,22 @@ subroutine cgyro_rhs(ij)
+ 
+ !$acc data present(h_x,g_x,rhs,field)
+ 
+   call timer_lib_out('str_mem')
+ 
+ 
+   ! Prepare suitable distribution (g, not h) for conservative upwind method
+   if (n_field > 1) then
+      call timer_lib_in('str')
+ 
+-!$acc parallel loop  collapse(3) independent private(iv_loc,is) &
++!$acc parallel loop  collapse(3) independent gang vector &
++!$acc&         private(iv_loc,is) &
+ !$acc&         present(is_v,z,temp,jvec_c) &
+ !$acc&         present(nt1,nt2,nv1,nv2,nc) &
+ !$acc&         default(none) async(1)
+      do itor=nt1,nt2
+       do iv=nv1,nv2
+         do ic=1,nc
+            iv_loc = iv-nv1+1
+            is = is_v(iv)
+ 
+            g_x(ic,iv_loc,itor) = h_x(ic,iv_loc,itor)+ & 
+@@ -80,21 +81,22 @@ subroutine cgyro_rhs(ij)
+      enddo
+ 
+      call cgyro_rhs_comm_test(1)
+ !$acc wait(1)
+      call cgyro_rhs_comm_test(1)
+ 
+      call timer_lib_out('str')
+   else
+      call timer_lib_in('str_mem')
+ 
+-!$acc parallel loop  collapse(3) independent private(iv_loc) &
++!$acc parallel loop  collapse(3) gang vector &
++!$acc&         independent private(iv_loc) &
+ !$acc&         present(nt1,nt2,nv1,nv2,nc)  &
+ !$acc&         default(none) async(1)
+      do itor=nt1,nt2
+       do iv=nv1,nv2
+         do ic=1,nc
+            iv_loc = iv-nv1+1
+            g_x(ic,iv_loc,itor) = h_x(ic,iv_loc,itor)
+         enddo
+       enddo
+      enddo
+diff --git a/cgyro/src/cgyro_source.F90 b/cgyro/src/cgyro_source.F90
+index b2ed4b9a..7ef8a7c3 100644
+--- a/cgyro/src/cgyro_source.F90
++++ b/cgyro/src/cgyro_source.F90
+@@ -25,21 +25,21 @@ subroutine cgyro_source
+ 
+   ! Time-delay source
+   if (nt1 == 0) then
+ 
+      ir = 1+n_radial/2
+ 
+      icm = (ir-1-1)*n_theta
+      icp = (ir-1+1)*n_theta
+ 
+ #ifdef _OPENACC
+-!$acc parallel loop private(j) present(h_x,source)
++!$acc parallel loop gang vector private(j) present(h_x,source)
+ #else
+ !$omp parallel do private(j)
+ #endif
+      do iv_loc=1,nv_loc
+ !$acc loop seq
+       do j=1,n_theta
+         ! Recursive update of p=+1 source 
+         source(j,iv_loc,0) = source(j,iv_loc,0) + &
+                 (h_x(icp+j,iv_loc,0)-source(j,iv_loc,0))/sa
+         ! Subtract source from h(0,+1)
+diff --git a/cgyro/src/cgyro_upwind.F90 b/cgyro/src/cgyro_upwind.F90
+index b5dd146a..fa01a72a 100644
+--- a/cgyro/src/cgyro_upwind.F90
++++ b/cgyro/src/cgyro_upwind.F90
+@@ -91,21 +91,21 @@ subroutine cgyro_upwind_r64
+ !$acc update device(upwind_res)
+ #else
+ !$acc end host_data
+ #endif
+ 
+   call timer_lib_out('str_comm')
+ 
+   call timer_lib_in('str')
+ 
+ #ifdef _OPENACC
+-!$acc parallel loop collapse(3) independent &
++!$acc parallel loop collapse(3) independent gang vector &
+ !$acc&         present(is_v,ix_v,ie_v,xi,vel,upfac2,g_x,upwind_res) &
+ !$acc&         private(iv_loc,is,ix,ie) present(nt1,nt2,nv1,nv2,nc) default(none)
+ #else
+ !$omp parallel do collapse(2) private(iv_loc,is,ix,ie,ic)
+ #endif
+   do itor=nt1,nt2
+    do iv=nv1,nv2
+      do ic=1,nc
+         iv_loc = iv-nv1+1
+         is = is_v(iv)
+@@ -198,21 +198,21 @@ subroutine cgyro_upwind_r32
+ !$acc update device(upwind32_res)
+ #else
+ !$acc end host_data
+ #endif
+ 
+   call timer_lib_out('str_comm')
+ 
+   call timer_lib_in('str')
+ 
+ #ifdef _OPENACC
+-!$acc parallel loop collapse(3) independent &
++!$acc parallel loop collapse(3) independent gang vector &
+ !$acc&         present(is_v,ix_v,ie_v,xi,vel,upfac2,g_x,upwind32_res) &
+ !$acc&         private(iv_loc,is,ix,ie) &
+ !$acc&         present(nt1,nt2,nv1,nv2,nc) default(none)
+ #else
+ !$omp parallel do collapse(2) private(iv_loc,is,ix,ie,ic)
+ #endif
+   do itor=nt1,nt2
+    do iv=nv1,nv2
+      do ic=1,nc
+         iv_loc = iv-nv1+1

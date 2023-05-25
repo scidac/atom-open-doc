@@ -1,0 +1,70 @@
+diff --git a/cgyro/src/cgyro_upwind.F90 b/cgyro/src/cgyro_upwind.F90
+index fa01a72a..5a66106d 100644
+--- a/cgyro/src/cgyro_upwind.F90
++++ b/cgyro/src/cgyro_upwind.F90
+@@ -24,30 +24,28 @@ subroutine cgyro_upwind_r64
+   implicit none
+ 
+   integer :: is,ie,ix,itor
+ #ifdef _OPENACC
+   complex :: res_loc
+ #endif
+ 
+   call timer_lib_in('str')
+ 
+ #ifdef _OPENACC
+-!$acc parallel loop collapse(3) gang &
+-!$acc&         private(res_loc,iv) &
++!$acc parallel loop collapse(3) gang vector independent &
++!$acc&         private(res_loc,iv,iv_loc) &
+ !$acc&         present(g_x,upfac1,is_v,upwind_res_loc) &
+ !$acc&        present(nt1,nt2,ns1,ns2,nc,nv1,nv2) default(none)
+   do itor=nt1,nt2
+    do is=ns1,ns2
+      do ic=1,nc
+        res_loc = (0.0,0.0)
+-
+-!$acc loop vector private(iv_loc) reduction(+:res_loc)
+        do iv=nv1,nv2
+           iv_loc = iv-nv1+1
+           if (is == is_v(iv)) then
+              res_loc = res_loc+upfac1(ic,iv_loc,itor)*g_x(ic,iv_loc,itor)
+           endif
+        enddo
+        upwind_res_loc(ic,is,itor) = res_loc
+     enddo
+    enddo
+   enddo
+@@ -131,30 +129,29 @@ subroutine cgyro_upwind_r32
+   implicit none
+ 
+   integer :: is,ie,ix,itor
+ #ifdef _OPENACC
+   complex(KIND=REAL32) :: res_loc
+ #endif
+ 
+   call timer_lib_in('str')
+ 
+ #ifdef _OPENACC
+-!$acc parallel loop collapse(3) gang &
+-!$acc&         private(res_loc,iv) &
++!$acc parallel loop collapse(3) gang vector independent &
++!$acc&         private(res_loc,iv,iv_loc) &
+ !$acc&         present(g_x,upfac1,is_v,upwind32_res_loc) &
+ !$acc&         present(nt1,nt2,ns1,ns2,nc,nv1,nv2) default(none)
+   do itor=nt1,nt2
+    do is=ns1,ns2
+      do ic=1,nc
+        res_loc = (0.0,0.0)
+ 
+-!$acc loop vector private(iv_loc) reduction(+:res_loc)
+        do iv=nv1,nv2
+           iv_loc = iv-nv1+1
+           if (is == is_v(iv)) then
+              res_loc = res_loc+upfac1(ic,iv_loc,itor)*g_x(ic,iv_loc,itor)
+           endif
+        enddo
+        upwind32_res_loc(ic,is,itor) = res_loc
+     enddo
+    enddo
+   enddo

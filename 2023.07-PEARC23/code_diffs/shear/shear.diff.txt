@@ -1,0 +1,119 @@
+!--------------------------------------------------------		!--------------------------------------------------------
+! cgyro_advect_wavenumber.f90						! cgyro_advect_wavenumber.f90
+!									!
+! PURPOSE:								! PURPOSE:
+!  Manage shearing by wavenumber advection.				!  Manage shearing by wavenumber advection.
+!--------------------------------------------------------		!--------------------------------------------------------
+									
+subroutine cgyro_advect_wavenumber(ij)					subroutine cgyro_advect_wavenumber(ij)
+									
+  use cgyro_globals							  use cgyro_globals
+  use timer_lib								  use timer_lib
+									
+  implicit none								  implicit none
+									
+  integer, intent(in) :: ij						  integer, intent(in) :: ij
+  integer :: ir,l,ll,j,icc,in,itor				|         integer :: ir,l,ll,j,iccj,ivc,itor,llnt
+  complex, dimension(:,:),allocatable :: he			|         complex :: rl,he1,he2
+									
+  if (nonlinear_flag == 0) return					  if (nonlinear_flag == 0) return
+									
+  if (source_flag == 1) then						  if (source_flag == 1) then
+     call timer_lib_in('shear')						     call timer_lib_in('shear')
+     allocate(he(n_theta,1-2*n_wave:n_radial+2*n_wave))		<       
+									
+#ifdef _OPENACC								#ifdef _OPENACC
+!$acc parallel loop collapse(2) gang private(in,ir,l,icc,       |       !$acc parallel loop collapse(2) gang private(ivc,ir,l,icc
+!$acc&                   present(rhs(:,:,:,ij),omega_ss,f       |       !$acc&                   present(rhs(:,:,:,ij),omega_ss,f
+!$acc&                   vector_length(n_theta)			<       
+#else									#else
+!$omp parallel do collapse(2) private(in,ir,j,icc,l,ll,he       |       !$omp parallel do collapse(2) private(ivc,ir,j,iccj,l,ll,
+#endif									#endif
+     do itor=nt1,nt2							     do itor=nt1,nt2
+      do in=1,nv_loc						|             do ivc=1,nv_loc
+        he(:,1-2*n_wave:0) = 0.0				<       
+        he(:,n_radial+1:n_radial+2*n_wave) = 0.0		<       
+									
+        ! Wavenumber advection ExB shear				        ! Wavenumber advection ExB shear
+        if (shear_method == 2) then					        if (shear_method == 2) then
+								|       !$acc loop collapse(2) vector private(ir,j,l,iccj,ll,rl,l
+!$acc loop seq							<       
+           do ir=1,n_radial						           do ir=1,n_radial
+              icc = (ir-1)*n_theta				<       
+!$acc loop vector private(j)					<       
+              do j=1,n_theta						              do j=1,n_theta
+                 he(j,ir) = omega_eb_base*itor*h_x(icc+j,       |                        iccj = (ir-1)*n_theta+j
+              enddo						|                        rl = 0.0
+           enddo						<       
+								<       
+!$acc loop seq								!$acc loop seq
+           do ir=1,n_radial					|                        do l=1,n_wave
+              icc = (ir-1)*n_theta				|                           ll = (2*l-1)
+!$acc loop seq							|                           llnt = ll*n_theta
+              do l=1,n_wave					|                           ! was he(j,ir+ll)
+                 ll = 2*l-1					|                           if ( (ir+ll) <= n_radial ) then
+!$acc loop vector private(j)					|                              he1 = h_x(iccj+llnt,ivc,itor)
+                 do j=1,n_theta					|                           else
+								>                              he1 = 0.0
+								>                           endif
+								>                           ! was he(j,ir-ll)
+								>                           if ( (ir-ll) >= 1 ) then
+								>                              he2 = h_x(iccj-llnt,ivc,itor)
+								>                           else
+								>                              he2 = 0.0
+								>                           endif
+                    ! Sign throughout paper is incorrect 		                    ! Sign throughout paper is incorrect 
+                    ! Thus sign below has been checked an		                    ! Thus sign below has been checked an
+                    rhs(icc+j,in,itor,ij) = rhs(icc+j,in,       |                           rl = rl+c_wave(l)*(he1-he2)
+                 enddo							                 enddo
+								>                        rhs(iccj,ivc,itor,ij) = rhs(iccj,ivc,ito
+              enddo							              enddo
+           enddo							           enddo
+									
+        endif								        endif
+									
+        ! Wavenumber advection profile shear				        ! Wavenumber advection profile shear
+        if (profile_shear_flag == 1) then				        if (profile_shear_flag == 1) then
+									
+!$acc loop seq							|       !$acc loop collapse(2) vector private(ir,j,l,iccj,ll,rl,l
+           do ir=1,n_radial						           do ir=1,n_radial
+              icc = (ir-1)*n_theta				<       
+!$acc loop vector private(j)					<       
+              do j=1,n_theta						              do j=1,n_theta
+                 he(j,ir) = sum(omega_ss(:,icc+j,in,itor)       |                        iccj = (ir-1)*n_theta+j
+              enddo						|                        rl = rhs(iccj,ivc,itor,ij)
+           enddo						<       
+								<       
+!$acc loop seq								!$acc loop seq
+           do ir=1,n_radial					|                        do l=1,n_wave
+              icc = (ir-1)*n_theta				|                           ll = 2*l-1
+!$acc loop seq							|                           llnt = ll*n_theta
+              do l=1,n_wave					|                           ! was he(j,ir+ll)
+                 ll = 2*l-1					|                           if ( (ir+ll) <= n_radial ) then
+!$acc loop vector private(j)					|                              he1 = sum(omega_ss(:,iccj+llnt,ivc
+                 do j=1,n_theta					|                           else
+								>                              he1 = 0.0
+								>                           endif
+								>                           ! was he(j,ir-ll)
+								>                           if ( (ir-ll) >= 1 ) then
+								>                              he2 = sum(omega_ss(:,iccj-llnt,ivc
+								>                           else
+								>                              he2 = 0.0
+								>                           endif
+                    ! Note opposite sign to ExB shear			                    ! Note opposite sign to ExB shear
+                    rhs(icc+j,in,itor,ij) = rhs(icc+j,in,       |                           rl = rl-c_wave(l)*(he1-he2)
+                 enddo							                 enddo
+								>                        rhs(iccj,ivc,itor,ij) = rl
+              enddo							              enddo
+           enddo							           enddo
+									
+        endif								        endif
+      enddo								      enddo
+     enddo								     enddo
+									
+     deallocate(he)						<       
+     call timer_lib_out('shear')					     call timer_lib_out('shear')
+									
+  endif									  endif
+									
+end subroutine cgyro_advect_wavenumber					end subroutine cgyro_advect_wavenumber
