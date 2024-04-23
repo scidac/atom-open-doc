@@ -1,0 +1,39 @@
+[sfilig@frontier06348 ~]$ rocm-smi --showproductname
+
+
+======================= ROCm System Management Interface =======================
+================================= Product Info =================================
+GPU[0]		: Card series: 		AMD INSTINCT MI200 (MCM) OAM LC MBA HPE C2
+GPU[0]		: Card model: 		FirePro W4300
+GPU[0]		: Card vendor: 		Advanced Micro Devices, Inc. [AMD/ATI]
+GPU[0]		: Card SKU: 		D65201
+GPU[1]		: Card series: 		AMD INSTINCT MI200 (MCM) OAM LC MBA HPE C2
+GPU[1]		: Card model: 		FirePro W4300
+GPU[1]		: Card vendor: 		Advanced Micro Devices, Inc. [AMD/ATI]
+GPU[1]		: Card SKU: 		D65201
+GPU[2]		: Card series: 		AMD INSTINCT MI200 (MCM) OAM LC MBA HPE C2
+GPU[2]		: Card model: 		FirePro W4300
+GPU[2]		: Card vendor: 		Advanced Micro Devices, Inc. [AMD/ATI]
+GPU[2]		: Card SKU: 		D65201
+GPU[3]		: Card series: 		AMD INSTINCT MI200 (MCM) OAM LC MBA HPE C2
+GPU[3]		: Card model: 		FirePro W4300
+GPU[3]		: Card vendor: 		Advanced Micro Devices, Inc. [AMD/ATI]
+GPU[3]		: Card SKU: 		D65201
+GPU[4]		: Card series: 		AMD INSTINCT MI200 (MCM) OAM LC MBA HPE C2
+GPU[4]		: Card model: 		FirePro W4300
+GPU[4]		: Card vendor: 		Advanced Micro Devices, Inc. [AMD/ATI]
+GPU[4]		: Card SKU: 		D65201
+GPU[5]		: Card series: 		AMD INSTINCT MI200 (MCM) OAM LC MBA HPE C2
+GPU[5]		: Card model: 		FirePro W4300
+GPU[5]		: Card vendor: 		Advanced Micro Devices, Inc. [AMD/ATI]
+GPU[5]		: Card SKU: 		D65201
+GPU[6]		: Card series: 		AMD INSTINCT MI200 (MCM) OAM LC MBA HPE C2
+GPU[6]		: Card model: 		FirePro W4300
+GPU[6]		: Card vendor: 		Advanced Micro Devices, Inc. [AMD/ATI]
+GPU[6]		: Card SKU: 		D65201
+GPU[7]		: Card series: 		AMD INSTINCT MI200 (MCM) OAM LC MBA HPE C2
+GPU[7]		: Card model: 		FirePro W4300
+GPU[7]		: Card vendor: 		Advanced Micro Devices, Inc. [AMD/ATI]
+GPU[7]		: Card SKU: 		D65201
+================================================================================
+============================= End of ROCm SMI Log ==============================

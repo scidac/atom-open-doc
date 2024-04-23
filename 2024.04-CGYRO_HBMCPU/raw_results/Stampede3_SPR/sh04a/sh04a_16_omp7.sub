@@ -1,0 +1,11 @@
+#!/bin/bash
+#SBATCH -J sh04a_16_omp7           # Job name
+#SBATCH -o sh04a_16_omp7.o%j       # Name of stdout output file
+#SBATCH -e sh04a_16_omp7.e%j       # Name of stderr error file
+#SBATCH -p spr      # Queue (partition) name
+#SBATCH -N 16               # Total # of nodes 
+#SBATCH -n 256             # Total # of mpi tasks
+#SBATCH -t 01:00:00        # Run time (hh:mm:ss)
+
+cgyro -e t8_16_omp7 -n 256 -nomp 7 -p /scratch/09865/isucsd/sh04a
+

@@ -1,0 +1,10 @@
+#!/bin/bash -l
+#SBATCH -J sh04a_8           # Job name
+#SBATCH -o sh04a_8.o%j       # Name of stdout output file
+#SBATCH -e sh04a_8.e%j       # Name of stderr error file
+#SBATCH -p batch
+#SBATCH -t 00:30:00
+#SBATCH -N 8
+
+cgyro -e t16_8_gpu2 -n 64 -nomp 7 -numa 8 -mpinuma 1 -p /lustre/orion/scratch/sfilig/sh04a
+

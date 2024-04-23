@@ -1,0 +1,20 @@
+[sfilig@frontier02175 t16_8_gpu2]$ rocm-smi 
+
+
+======================= ROCm System Management Interface =======================
+================================= Concise Info =================================
+GPU[1]		: Not supported on the given system
+GPU[3]		: Not supported on the given system
+GPU[5]		: Not supported on the given system
+GPU[7]		: Not supported on the given system
+GPU  Temp   AvgPwr  SCLK     MCLK     Fan  Perf    PwrCap  VRAM%  GPU%  
+0    51.0c  424.0W  1700Mhz  1600Mhz  0%   manual  560.0W   38%   99%   
+1    51.0c  N/A     1700Mhz  1600Mhz  0%   manual  0.0W     38%   99%   
+2    44.0c  417.0W  1700Mhz  1600Mhz  0%   manual  560.0W   38%   100%  
+3    44.0c  N/A     1695Mhz  1600Mhz  0%   manual  0.0W     38%   100%  
+4    50.0c  420.0W  1700Mhz  1600Mhz  0%   manual  560.0W   38%   100%  
+5    49.0c  N/A     1700Mhz  1600Mhz  0%   manual  0.0W     38%   100%  
+6    42.0c  418.0W  1700Mhz  1600Mhz  0%   manual  560.0W   38%   100%  
+7    47.0c  N/A     1700Mhz  1600Mhz  0%   manual  0.0W     38%   100%  
+================================================================================
+============================= End of ROCm SMI Log ==============================

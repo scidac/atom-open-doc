@@ -1,0 +1,21 @@
+isucsd@nid002193:~/git.atom-doc/atom-doc/2024.04-CGYRO_HBMCPU/raw_results/Perlmutter_GPU> nvidia-smi -L
+GPU 0: NVIDIA A100-SXM4-40GB (UUID: GPU-9c7f9697-f062-a881-d749-3597ac8f6f88)
+GPU 1: NVIDIA A100-SXM4-40GB (UUID: GPU-d37963a4-5d93-d060-ddb2-5a2c2e307370)
+GPU 2: NVIDIA A100-SXM4-40GB (UUID: GPU-155df90b-f44f-5f82-1a5a-b6ce7143c2a4)
+GPU 3: NVIDIA A100-SXM4-40GB (UUID: GPU-86dbf34e-0192-45b4-3651-3911a230a488)
+isucsd@nid002193:~/git.atom-doc/atom-doc/2024.04-CGYRO_HBMCPU/raw_results/Perlmutter_GPU> nvidia-smi topo -m
+	GPU0	GPU1	GPU2	GPU3	CPU Affinity	NUMA Affinity
+GPU0	 X 	NV4	NV4	NV4	48-63,112-127	3
+GPU1	NV4	 X 	NV4	NV4	32-47,96-111	2
+GPU2	NV4	NV4	 X 	NV4	16-31,80-95	1
+GPU3	NV4	NV4	NV4	 X 	0-15,64-79	0
+
+Legend:
+
+  X    = Self
+  SYS  = Connection traversing PCIe as well as the SMP interconnect between NUMA nodes (e.g., QPI/UPI)
+  NODE = Connection traversing PCIe as well as the interconnect between PCIe Host Bridges within a NUMA node
+  PHB  = Connection traversing PCIe as well as a PCIe Host Bridge (typically the CPU)
+  PXB  = Connection traversing multiple PCIe bridges (without traversing the PCIe Host Bridge)
+  PIX  = Connection traversing at most a single PCIe bridge
+  NV#  = Connection traversing a bonded set of # NVLinks

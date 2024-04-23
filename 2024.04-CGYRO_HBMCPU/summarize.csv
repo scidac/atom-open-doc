@@ -1,0 +1,16 @@
+#Input, nodes, System, FFT (NL), Custom - compute bound, Custom - memory bound, Comm. and IO, Total
+nl02, 4, Frontier_GPU, 1.07, 0.58, 0.34, 1.06, 3.1
+nl02, 4, Perlmutter_GPU, 1.11, 0.56, 0.49, 1.27, 3.4
+nl02, 8, Stampede3_SPR, 1.81, 2.70, 1.19, 3.37, 9.1
+nl02, 8, Perlmutter_CPU, 4.42, 3.23, 3.09, 3.72, 14.5
+nl02, 8, Stampede3_ICX, 4.17, 4.61, 3.68, 3.01, 15.5
+nl03, 4, Frontier_GPU, 15.05, 6.70, 2.57, 12.95, 37.4
+nl03, 4, Perlmutter_GPU, 16.98, 6.75, 2.40, 16.22, 42.4
+nl03, 8, Stampede3_SPR, 36.53, 66.18, 7.34, 67.17, 177.5
+nl03, 8, Perlmutter_CPU, 121.84, 54.52, 14.65, 36.40, 227.8
+nl03, 8, Stampede3_ICX, 113.70, 89.50, 24.05, 88.38, 315.7
+sh04a, 8, Frontier_GPU, 11.04, 6.20, 1.38, 9.66, 28.3
+sh04a, 8, Perlmutter_GPU, 12.78, 5.76, 1.49, 14.69, 34.8
+sh04a, 16, Stampede3_SPR, 40.45, 41.41, 4.44, 33.03, 119.4
+sh04a, 16, Perlmutter_CPU, 138.27, 63.22, 8.35, 29.41, 239.5
+sh04a, 16, Stampede3_ICX, 137.47, 78.03, 14.10, 32.12, 261.8

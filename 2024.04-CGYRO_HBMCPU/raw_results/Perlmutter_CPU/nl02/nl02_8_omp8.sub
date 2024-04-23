@@ -1,0 +1,12 @@
+#!/bin/bash
+#SBATCH -J nl02_8_omp8           # Job name
+#SBATCH -o nl02_8_omp8.o%j       # Name of stdout output file
+#SBATCH -e nl02_8_omp8.e%j       # Name of stderr error file
+#SBATCH -q debug      # Queue (partition) name
+#SBATCH -C cpu
+#SBATCH -n 256             # Total # of mpi tasks
+#SBATCH -c 8
+#SBATCH -t 00:30:00        # Run time (hh:mm:ss)
+
+cgyro -e t1_omp8 -n 256 -nomp 8 -p /pscratch/sd/i/isucsd/b202404/nl02
+
