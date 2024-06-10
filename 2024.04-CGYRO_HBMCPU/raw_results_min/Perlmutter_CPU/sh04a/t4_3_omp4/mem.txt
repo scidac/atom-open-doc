@@ -1,0 +1,17 @@
+(nersc-python) isucsd@perlmutter:nid005777:~> top
+
+top - 13:47:48 up 24 days, 22:07,  1 user,  load average: 170.83, 105.94, 165.53
+Tasks: 2871 total,  65 running, 2806 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 98.7 us,  1.1 sy,  0.0 ni,  0.1 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+MiB Mem : 515307.0+total, 142724.8+free, 383197.5+used, 2166.195 buff/cache
+MiB Swap:    0.000 total,    0.000 free,    0.000 used. 132109.5+avail Mem 
+
+    PID USER      PR  NI    VIRT    RES    SHR S  %CPU  %MEM     TIME+ COMMAND                                                                                              
+  79647 isucsd    20   0 8183892 5.343g  37836 R 372.7 1.062   6:29.43 cgyro                                                                                                
+  79743 isucsd    20   0 8185384 5.346g  37764 R 372.7 1.062   6:22.60 cgyro                                                                                                
+  79753 isucsd    20   0 8185296 5.343g  37420 R 372.7 1.062   6:18.88 cgyro                                                                                                
+...
+(nersc-python) isucsd@perlmutter:nid005777:~> free
+              total        used        free      shared  buff/cache   available
+Mem:      527674416   392380052   146164332     1804140     2218468   135294364
+Swap:             0           0           0

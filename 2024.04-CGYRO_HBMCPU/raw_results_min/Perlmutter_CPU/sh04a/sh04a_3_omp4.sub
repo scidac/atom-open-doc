@@ -1,0 +1,12 @@
+#!/bin/bash
+#SBATCH -J sh04a_3_omp4           # Job name
+#SBATCH -o sh04a_3_omp4.o%j       # Name of stdout output file
+#SBATCH -e sh04a_3_omp4.e%j       # Name of stderr error file
+#SBATCH -q regular     # Queue (partition) name
+#SBATCH -C cpu
+#SBATCH -n 192             # Total # of mpi tasks
+#SBATCH -c 4
+#SBATCH -t 03:00:00        # Run time (hh:mm:ss)
+
+cd sh04a && cgyro -n 192 -nomp 4
+

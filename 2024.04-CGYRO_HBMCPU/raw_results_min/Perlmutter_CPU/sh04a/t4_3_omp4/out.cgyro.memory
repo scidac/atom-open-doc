@@ -1,0 +1,82 @@
+  == Non-Distributed ==
+ 
+ Pointers
+ 
+    0.002 MB   ie_v
+    0.002 MB   ix_v
+    0.002 MB   is_v
+    0.111 MB   ir_c
+    0.111 MB   it_c
+    0.111 MB   ic_c
+    0.002 MB   iv_v
+    3.097 MB   icd_c
+   12.386 MB   dtheta             (    7,27648,    4) complex 
+   12.386 MB   dtheta_up          (    7,27648,    4) complex 
+ 
+ Fields and field solve
+ 
+    3.539 MB   field              (    2,27648,    4) complex 
+    3.539 MB   field_dot          (    2,27648,    4) complex 
+    3.539 MB   field_loc          (    2,27648,    4) complex 
+    3.539 MB   field_old          (    2,27648,    4) complex 
+    3.539 MB   field_old2         (    2,27648,    4) complex 
+    3.539 MB   field_old3         (    2,27648,    4) complex 
+    1.769 MB   fcoef              (    2,27648,    4) real    
+    1.769 MB   gcoef              (    2,27648,    4) real    
+ 
+ Nonlinear
+ 
+   21.344 MB   fx                 ( 193,1728,   4) complex 
+   21.344 MB   gx                 ( 193,1728,   4) complex 
+   21.344 MB   fy                 ( 193,1728,   4) complex 
+   21.344 MB   gy                 ( 193,1728,   4) complex 
+    0.143 GB   ux                 ( 384,1728,  27) real    
+    0.287 GB   vx                 ( 384,1728,  54) real    
+    0.143 GB   uy                 ( 384,1728,  27) real    
+    0.287 GB   vy                 ( 384,1728,  54) real    
+   21.234 MB   uv                 ( 384,1728,   4) real    
+ 
+ TOTAL
+ 1019.555 MB [persistent memory per MPI process]
+ 
+  == Distributed ==
+ 
+ Distribution-like arrays
+ 
+    0.127 GB   h0_old             (27648,   72,    4) complex 
+    0.764 GB   rhs                (27648,   72,    4,    6) complex 
+    0.255 GB   omega_s            (    2,27648,   72,    4) complex 
+    0.255 GB   omega_ss           (    2,27648,   72,    4) complex 
+    0.127 GB   omega_cap_h        (27648,   72,    4) complex 
+    0.127 GB   omega_h            (27648,   72,    4) complex 
+    0.127 GB   h_x                (27648,   72,    4) complex 
+    0.127 GB   h0_x               (27648,   72,    4) complex 
+    0.127 GB   g_x                (27648,   72,    4) complex 
+    0.127 GB   cap_h_c            (27648,   72,    4) complex 
+    0.127 GB   cap_h_ct           (27648,   72,    4) complex 
+    0.127 GB   cap_h_c_dot        (27648,   72,    4) complex 
+    0.127 GB   cap_h_c_old        (27648,   72,    4) complex 
+    0.127 GB   cap_h_c_old2       (27648,   72,    4) complex 
+    0.127 GB   cap_h_v            (4608, 432,   4) complex 
+    0.127 GB   jvec_c             (    2,27648,   72,    4) real    
+    0.340 GB   jvec_c_nl
+    0.127 GB   jvec_v             (   2,4608, 432,   4) real    
+    0.127 GB   jxvec_c            (    2,27648,   72,    4) real    
+   63.701 MB   upfac1             (27648,   72,    4) real    
+   63.701 MB   upfac2             (27648,   72,    4) real    
+ 
+ Nonlinear bracket
+ 
+   63.701 MB   fA_nl              (1152,   4,  27,  32) complex 
+   63.701 MB   fB_nl              (1152,   4,  27,  32) complex 
+    9.437 MB   g_nl               (   2,1152,   2, 128) complex 
+   63.701 MB   fpackA             (1152,   4, 864) complex 
+   63.701 MB   fpackB             (1152,   4, 864) complex 
+    9.437 MB   gpack              (   2,1152,   2, 128) complex 
+ 
+ Collision operator
+ 
+    5.972 MB   cmat
+ 
+ TOTAL
+    3.932 GB [per MPI process]

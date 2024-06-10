@@ -1,0 +1,12 @@
+#!/bin/bash
+#SBATCH -J nl03_1_omp4           # Job name
+#SBATCH -o nl03_1_omp4.o%j       # Name of stdout output file
+#SBATCH -e nl03_1_omp4.e%j       # Name of stderr error file
+#SBATCH -q regular     # Queue (partition) name
+#SBATCH -C cpu
+#SBATCH -n 64             # Total # of mpi tasks
+#SBATCH -c 4
+#SBATCH -t 03:00:00        # Run time (hh:mm:ss)
+
+cd nl03 && cgyro -n 64 -nomp 4
+
