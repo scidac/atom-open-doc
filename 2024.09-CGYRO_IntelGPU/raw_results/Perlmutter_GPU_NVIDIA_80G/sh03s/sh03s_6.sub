@@ -1,0 +1,15 @@
+#!/bin/bash
+#SBATCH -J sh03s_6           # Job name
+#SBATCH -o sh03s_6.o%j       # Name of stdout output file
+#SBATCH -e sh03s_6.e%j       # Name of stderr error file
+#SBATCH -q debug      # Queue (partition) name
+#SBATCH -n 24             # Total # of mpi tasks
+#SBATCH -c 32
+#SBATCH -t 00:30:00        # Run time (hh:mm:ss)
+#SBATCH -A mp94_g    # Allocation name (req'd if you have more than 1)
+#SBATCH -C gpu&hbm80g
+#SBATCH --gpus-per-node=4
+export SLURM_CPU_BIND="cores"
+
+cgyro -e t12_6_gpu1 -n 24 -nomp 32 -p /pscratch/sd/i/isucsd/n1/sh03s
+

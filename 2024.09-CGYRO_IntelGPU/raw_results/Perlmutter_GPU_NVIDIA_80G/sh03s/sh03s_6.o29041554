@@ -1,0 +1,35 @@
+==========================================================
+CGYRO b09f84340 [2024-07-17] PERLMUTTER_GPU Linux x86_64
+==========================================================
+> srun -C gpu --cpu_bind=cores -n 24 -c 32 /global/homes/i/isucsd/git.gacode/gacode/platform/exec/wrap.PERLMUTTER_GPU /global/homes/i/isucsd/git.gacode/gacode/cgyro/src/cgyro 0
+nid008340 2 2 1 pid 1823386's current affinity list: 32-47,96-111
+nid008340 3 3 0 pid 1823388's current affinity list: 48-63,112-127
+nid008340 0 0 3 pid 1823383's current affinity list: 0-15,64-79
+nid008340 1 1 2 pid 1823384's current affinity list: 16-31,80-95
+nid008556 20 0 3 pid 28348's current affinity list: 0-15,64-79
+nid008556 22 2 1 pid 28351's current affinity list: 32-47,96-111
+nid008556 23 3 0 pid 28353's current affinity list: 48-63,112-127
+nid008556 21 1 2 pid 28349's current affinity list: 16-31,80-95
+nid008544 13 1 2 pid 84052's current affinity list: 16-31,80-95
+nid008544 15 3 0 pid 84056's current affinity list: 48-63,112-127
+nid008544 14 2 1 pid 84054's current affinity list: 32-47,96-111
+nid008544 12 0 3 pid 84051's current affinity list: 0-15,64-79
+nid008549 16 0 3 pid 1805343's current affinity list: 0-15,64-79
+nid008549 19 3 0 pid 1805348's current affinity list: 48-63,112-127
+nid008549 17 1 2 pid 1805344's current affinity list: 16-31,80-95
+nid008549 18 2 1 pid 1805346's current affinity list: 32-47,96-111
+nid008480 10 2 1 pid 424763's current affinity list: 32-47,96-111
+nid008480 11 3 0 pid 424765's current affinity list: 48-63,112-127
+nid008480 8 0 3 pid 424760's current affinity list: 0-15,64-79
+nid008480 9 1 2 pid 424761's current affinity list: 16-31,80-95
+nid008412 5 1 2 pid 354668's current affinity list: 16-31,80-95
+nid008412 4 0 3 pid 354667's current affinity list: 0-15,64-79
+nid008412 6 2 1 pid 354670's current affinity list: 32-47,96-111
+nid008412 7 3 0 pid 354672's current affinity list: 48-63,112-127
+[t: 0.000E+00][e: 0.000E+00 0.000E+00]
+[t: 1.000E+00][e: 3.834E-05 2.059E-08]
+[t: 2.000E+00][e: 4.258E-05 1.412E-08]
+[t: 3.000E+00][e: 5.281E-04 4.964E-08]
+[t: 4.000E+00][e: 1.917E-03 2.057E-07]
+[t: 5.000E+00][e: 2.697E-03 2.439E-07]
+[t: 6.000E+00][e: 2.669E-03 1.895E-07]

@@ -1,0 +1,26 @@
+Platform #0: Intel(R) OpenCL
+ `-- Device #0: Intel(R) Xeon(R) Platinum 8468
+Platform #1: Intel(R) OpenCL Graphics
+ +-- Device #0: Intel(R) Data Center GPU Max 1550
+ +-- Device #1: Intel(R) Data Center GPU Max 1550
+ +-- Device #2: Intel(R) Data Center GPU Max 1550
+ +-- Device #3: Intel(R) Data Center GPU Max 1550
+ +-- Device #4: Intel(R) Data Center GPU Max 1550
+ +-- Device #5: Intel(R) Data Center GPU Max 1550
+ +-- Device #6: Intel(R) Data Center GPU Max 1550
+ `-- Device #7: Intel(R) Data Center GPU Max 1550
+Platform #2: Intel(R) OpenCL
+ `-- Device #0: Intel(R) Xeon(R) Platinum 8468
+==========================================================
+CGYRO 1128b5932 [2024-07-05] STAMPEDE3_GPU_IFX Linux x86_64
+==========================================================
+ibrun /home1/09865/isucsd/github/gacode/cgyro/src/cgyro 0
+TACC:  Starting up job 818592 
+TACC:  Starting parallel tasks... 
+[t: 0.000E+00][e: 0.000E+00 0.000E+00]
+[t: 1.000E-01][e: 5.949E-04 1.691E-05]
+[t: 2.000E-01][e: 3.016E-04 8.947E-06]
+[t: 3.000E-01][e: 1.549E-04 4.480E-06]
+[t: 4.000E-01][e: 7.599E-05 2.165E-06]
+[t: 5.000E-01][e: 4.287E-05 1.255E-06]
+TACC:  Shutdown complete. Exiting. 

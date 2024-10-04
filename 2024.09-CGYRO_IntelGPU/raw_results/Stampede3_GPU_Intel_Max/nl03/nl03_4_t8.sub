@@ -1,0 +1,11 @@
+#!/bin/bash
+#SBATCH -J nl03           # Job name
+#SBATCH -o nl03_4_t8.o%j       # Name of stdout output file
+#SBATCH -e nl03_4_t8.e%j       # Name of stderr error file
+#SBATCH -p pvc      # Queue (partition) name
+#SBATCH -N 4               # Total # of nodes 
+#SBATCH -n 32               # Total # of mpi tasks
+#SBATCH -t 00:30:00        # Run time (hh:mm:ss)
+clinfo -l
+
+cgyro -e n4_t8 -n 32 -nomp 12 -p /work2/09865/isucsd/stampede3/benchmarks/nl03

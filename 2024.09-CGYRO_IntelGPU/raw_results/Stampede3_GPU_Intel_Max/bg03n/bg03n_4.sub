@@ -1,0 +1,11 @@
+#!/bin/bash
+#SBATCH -J bg03n           # Job name
+#SBATCH -o bg03n_4.o%j       # Name of stdout output file
+#SBATCH -e bg03n_4.e%j       # Name of stderr error file
+#SBATCH -p pvc      # Queue (partition) name
+#SBATCH -N 4               # Total # of nodes 
+#SBATCH -n 32               # Total # of mpi tasks
+#SBATCH -t 01:00:00        # Run time (hh:mm:ss)
+clinfo -l
+
+cgyro -e t12_4_gpu2 -n 32 -nomp 12 -p /work2/09865/isucsd/stampede3/benchmarks/bg03n

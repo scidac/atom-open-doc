@@ -1,0 +1,11 @@
+#!/bin/bash
+#SBATCH -J sh03s           # Job name
+#SBATCH -o sh03s_6_t6.o%j       # Name of stdout output file
+#SBATCH -e sh03s_6_t6.e%j       # Name of stderr error file
+#SBATCH -p pvc      # Queue (partition) name
+#SBATCH -N 6               # Total # of nodes 
+#SBATCH -n 48               # Total # of mpi tasks
+#SBATCH -t 00:30:00        # Run time (hh:mm:ss)
+clinfo -l
+
+cgyro -e n6_t6 -n 48 -nomp 12 -p /work2/09865/isucsd/stampede3/benchmarks/sh03s

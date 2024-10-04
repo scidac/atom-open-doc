@@ -1,0 +1,14 @@
+==========================================================
+CGYRO 1128b5932 [2024-07-05] PERLMUTTER_GPU Linux x86_64
+==========================================================
+> srun -C gpu --cpu_bind=cores -n 4 -c 32 /global/homes/i/isucsd/git.gacode/gacode/platform/exec/wrap.PERLMUTTER_GPU /global/homes/i/isucsd/git.gacode/gacode/cgyro/src/cgyro 0
+nid001004 1 1 2 pid 782639's current affinity list: 16-31,80-95
+nid001004 0 0 3 pid 782638's current affinity list: 0-15,64-79
+nid001004 2 2 1 pid 782641's current affinity list: 32-47,96-111
+nid001004 3 3 0 pid 782643's current affinity list: 48-63,112-127
+[t: 0.000E+00][e: 0.000E+00 0.000E+00]
+[t: 1.000E-01][e: 4.639E-07 2.568E-08]
+[t: 2.000E-01][e: 4.348E-07 1.802E-08]
+[t: 3.000E-01][e: 2.789E-07 1.351E-08]
+[t: 4.000E-01][e: 2.658E-07 1.051E-08]
+[t: 5.000E-01][e: 2.487E-07 8.695E-09]

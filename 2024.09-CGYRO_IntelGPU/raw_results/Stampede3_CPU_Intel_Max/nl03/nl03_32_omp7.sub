@@ -1,0 +1,12 @@
+#!/bin/bash
+#SBATCH -J nl03_32_omp7           # Job name
+#SBATCH -o nl03_32_omp7.o%j       # Name of stdout output file
+#SBATCH -e nl03_32_omp7.e%j       # Name of stderr error file
+#SBATCH -p spr      # Queue (partition) name
+#SBATCH -N 32               # Total # of nodes 
+#SBATCH -n 256             # Total # of mpi tasks
+#SBATCH -t 01:00:00        # Run time (hh:mm:ss)
+
+cgyro -e t4_32_cpu8 -n 256 -nomp 7 -p /work2/09865/isucsd/stampede3/benchmarks/nl03
+cgyro -e t8_32_cpu8 -n 256 -nomp 7 -p /work2/09865/isucsd/stampede3/benchmarks/nl03
+

@@ -1,0 +1,13 @@
+==========================================================
+CGYRO c75539eeb [2024-08-05] STAMPEDE3_SPR_IFX Linux x86_64
+==========================================================
+ibrun /home1/09865/isucsd/github/gacode/cgyro/src/cgyro 0
+TACC:  Starting up job 1087571 
+TACC:  Starting parallel tasks... 
+[t: 0.000E+00][e: 0.000E+00 0.000E+00]
+[t: 1.000E-01][e: 5.541E-04 6.498E-09]
+[t: 2.000E-01][e: 2.813E-04 2.638E-09]
+[t: 3.000E-01][e: 3.833E-04 5.940E-09]
+[t: 4.000E-01][e: 9.010E-04 2.850E-08]
+[t: 5.000E-01][e: 1.334E-03 6.917E-08]
+TACC:  Shutdown complete. Exiting. 

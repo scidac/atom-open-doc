@@ -1,0 +1,26 @@
+==========================================================
+CGYRO 9a7d3b526 [2024-08-05] PERLMUTTER_GPU Linux x86_64
+==========================================================
+> srun -C gpu --cpu_bind=cores -n 16 -c 32 /global/homes/i/isucsd/git.gacode/gacode/platform/exec/wrap.PERLMUTTER_GPU /global/homes/i/isucsd/git.gacode/gacode/cgyro/src/cgyro 0
+nid008236 3 3 0 pid 1711927's current affinity list: 48-63,112-127
+nid008236 0 0 3 pid 1711922's current affinity list: 0-15,64-79
+nid008236 1 1 2 pid 1711923's current affinity list: 16-31,80-95
+nid008236 2 2 1 pid 1711925's current affinity list: 32-47,96-111
+nid008416 6 2 1 pid 2107017's current affinity list: 32-47,96-111
+nid008416 4 0 3 pid 2107014's current affinity list: 0-15,64-79
+nid008416 5 1 2 pid 2107015's current affinity list: 16-31,80-95
+nid008416 7 3 0 pid 2107019's current affinity list: 48-63,112-127
+nid008649 12 0 3 pid 1926931's current affinity list: 0-15,64-79
+nid008649 13 1 2 pid 1926932's current affinity list: 16-31,80-95
+nid008649 14 2 1 pid 1926934's current affinity list: 32-47,96-111
+nid008649 15 3 0 pid 1926936's current affinity list: 48-63,112-127
+nid008613 10 2 1 pid 2156326's current affinity list: 32-47,96-111
+nid008613 11 3 0 pid 2156328's current affinity list: 48-63,112-127
+nid008613 8 0 3 pid 2156323's current affinity list: 0-15,64-79
+nid008613 9 1 2 pid 2156324's current affinity list: 16-31,80-95
+[t: 0.000E+00][e: 0.000E+00 0.000E+00]
+[t: 1.000E-01][e: 5.949E-04 1.691E-05]
+[t: 2.000E-01][e: 3.016E-04 8.947E-06]
+[t: 3.000E-01][e: 1.549E-04 4.480E-06]
+[t: 4.000E-01][e: 7.599E-05 2.165E-06]
+[t: 5.000E-01][e: 4.287E-05 1.255E-06]

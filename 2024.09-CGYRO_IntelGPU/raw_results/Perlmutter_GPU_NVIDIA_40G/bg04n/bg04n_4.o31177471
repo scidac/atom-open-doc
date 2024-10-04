@@ -1,0 +1,58 @@
+==========================================================
+CGYRO c75539eeb [2024-08-05] PERLMUTTER_GPU Linux x86_64
+==========================================================
+> srun -C gpu --cpu_bind=cores -n 32 -c 16 /global/homes/i/isucsd/git.gacode/gacode/platform/exec/wrap.PERLMUTTER_GPU /global/homes/i/isucsd/git.gacode/gacode/cgyro/src/cgyro 0
+nid001776 4 4 3 pid 2057985's current affinity list: 32-39,96-103
+nid001776 1 1 2 pid 2057979's current affinity list: 8-15,72-79
+nid001776 5 5 2 pid 2057987's current affinity list: 40-47,104-111
+nid001776 6 6 1 pid 2057989's current affinity list: 48-55,112-119
+nid001776 0 0 3 pid 2057978's current affinity list: 0-7,64-71
+nid001776 2 2 1 pid 2057981's current affinity list: 16-23,80-87
+nid002429 8 0 3 pid 573127's current affinity list: 0-7,64-71
+0 starting nvidia-cuda-mps-control on nid001776
+8 starting nvidia-cuda-mps-control on nid002429
+nid008421 25 1 2 pid 927064's current affinity list: 8-15,72-79
+nid008421 27 3 0 pid 927068's current affinity list: 24-31,88-95
+nid003981 16 0 3 pid 636550's current affinity list: 0-7,64-71
+nid003981 17 1 2 pid 636551's current affinity list: 8-15,72-79
+nid003981 18 2 1 pid 636553's current affinity list: 16-23,80-87
+nid003981 20 4 3 pid 636557's current affinity list: 32-39,96-103
+nid003981 21 5 2 pid 636559's current affinity list: 40-47,104-111
+nid003981 19 3 0 pid 636555's current affinity list: 24-31,88-95
+nid003981 23 7 0 pid 636563's current affinity list: 56-63,120-127
+nid003981 22 6 1 pid 636561's current affinity list: 48-55,112-119
+16 starting nvidia-cuda-mps-control on nid003981
+nid002429 10 2 1 pid 573130's current affinity list: 16-23,80-87
+nid002429 11 3 0 pid 573132's current affinity list: 24-31,88-95
+nid001776 7 7 0 pid 2057991's current affinity list: 56-63,120-127
+nid002429 12 4 3 pid 573134's current affinity list: 32-39,96-103
+nid002429 15 7 0 pid 573140's current affinity list: 56-63,120-127
+nid001776 3 3 0 pid 2057983's current affinity list: 24-31,88-95
+nid008421 28 4 3 pid 927070's current affinity list: 32-39,96-103
+nid002429 9 1 2 pid 573128's current affinity list: 8-15,72-79
+nid008421 24 0 3 pid 927063's current affinity list: 0-7,64-71
+nid008421 29 5 2 pid 927072's current affinity list: 40-47,104-111
+nid002429 13 5 2 pid 573136's current affinity list: 40-47,104-111
+nid008421 31 7 0 pid 927076's current affinity list: 56-63,120-127
+nid002429 14 6 1 pid 573138's current affinity list: 48-55,112-119
+nid008421 26 2 1 pid 927066's current affinity list: 16-23,80-87
+24 starting nvidia-cuda-mps-control on nid008421
+nid008421 30 6 1 pid 927074's current affinity list: 48-55,112-119
+nid001776 0 0 mps ready: 2024-09-30T10:24:05-07:00
+nid002429 8 0 mps ready: 2024-09-30T10:24:05-07:00
+nid003981 16 0 mps ready: 2024-09-30T10:24:06-07:00
+nid008421 24 0 mps ready: 2024-09-30T10:24:06-07:00
+[t: 0.000E+00][e: 0.000E+00 0.000E+00]
+[t: 1.000E-01][e: 1.710E-02 3.714E-06]
+[t: 2.000E-01][e: 3.928E-03 3.620E-07]
+[t: 3.000E-01][e: 1.335E-03 5.262E-08]
+[t: 4.000E-01][e: 2.104E-03 1.373E-07]
+[t: 5.000E-01][e: 4.268E-03 5.441E-07]
+nid008421 24 0 stopping nvidia-cuda-mps-control: 2024-09-30T10:29:50-07:00
+nid001776 0 0 stopping nvidia-cuda-mps-control: 2024-09-30T10:29:50-07:00
+nid003981 16 0 stopping nvidia-cuda-mps-control: 2024-09-30T10:29:50-07:00
+nid002429 8 0 stopping nvidia-cuda-mps-control: 2024-09-30T10:29:50-07:00
+nid003981 16 0 stopped nvidia-cuda-mps-control: 2024-09-30T10:29:51-07:00
+nid002429 8 0 stopped nvidia-cuda-mps-control: 2024-09-30T10:29:51-07:00
+nid001776 0 0 stopped nvidia-cuda-mps-control: 2024-09-30T10:29:51-07:00
+nid008421 24 0 stopped nvidia-cuda-mps-control: 2024-09-30T10:29:51-07:00

@@ -1,0 +1,13 @@
+Setting up FRONTIER environment for gacode
+Using OpenACC offload setup
+==========================================================
+CGYRO b09f84340 [2024-07-17] FRONTIER Linux x86_64
+==========================================================
+> srun -n48 -c7 --gpus-per-task=1 --gpu-bind=closest /ccs/home/sfilig/git.gacode/gacode/cgyro/src/cgyro 0
+[t: 0.000E+00][e: 0.000E+00 0.000E+00]
+[t: 1.000E+00][e: 3.834E-05 2.059E-08]
+[t: 2.000E+00][e: 4.258E-05 1.412E-08]
+[t: 3.000E+00][e: 5.281E-04 4.964E-08]
+[t: 4.000E+00][e: 1.917E-03 2.057E-07]
+[t: 5.000E+00][e: 2.697E-03 2.439E-07]
+[t: 6.000E+00][e: 2.669E-03 1.895E-07]

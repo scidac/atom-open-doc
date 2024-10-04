@@ -1,0 +1,14 @@
+Setting up FRONTIER environment for gacode
+Using OpenACC offload setup
+==========================================================
+CGYRO c75539eeb [2024-08-05] FRONTIER Linux x86_64
+==========================================================
+> srun -n32 -c7 --gpus-per-task=1 --gpu-bind=closest /ccs/home/sfilig/git.gacode/gacode/cgyro/src/cgyro 0
+[t: 0.000E+00][e: 0.000E+00 0.000E+00]
+[t: 1.000E-01][e: 2.565E-04 8.446E-06]
+[t: 2.000E-01][e: 5.311E-05 3.700E-06]
+[t: 3.000E-01][e: 1.959E-05 2.832E-06]
+[t: 4.000E-01][e: 1.581E-05 3.592E-06]
+[t: 5.000E-01][e: 2.066E-05 7.455E-06]
+/lustre/orion/scratch/sfilig/fus140/g202404/sh04n/t8_4_gpu2 is not a valid simulation directory.
+Please create the directory first, or use -g option.

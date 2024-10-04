@@ -1,0 +1,12 @@
+#!/bin/bash -l
+#SBATCH -J nl03_4           # Job name
+#SBATCH -o nl03_4.o%j       # Name of stdout output file
+#SBATCH -e nl03_4.e%j       # Name of stderr error file
+#SBATCH -A fus140
+#SBATCH -p batch
+#SBATCH -q debug
+#SBATCH -t 00:30:00
+#SBATCH -N 4
+
+cgyro -e t8_4_gpu2 -n 32 -nomp 7 -numa 8 -mpinuma 1 -p /lustre/orion/scratch/sfilig/fus140/g202404/nl03
+

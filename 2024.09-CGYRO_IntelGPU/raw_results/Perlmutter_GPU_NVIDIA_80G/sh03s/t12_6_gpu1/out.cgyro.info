@@ -1,0 +1,54 @@
+INFO: (CGYRO) MPI1
+INFO: (CGYRO) MPI2
+INFO: (CGYRO) MPI3
+INFO: (CGYRO) Velocity order 2
+INFO: (CGYRO) MPI4
+INFO: (CGYRO) MPI5
+INFO: (CGYRO) MPI rank alignment 2
+INFO: (CGYRO) MPI6
+INFO: (CGYRO) MPI7
+INFO: (CGYRO) MPI8
+INFO: (CGYRO) Multiple toroidal harmonics
+INFO: (CGYRO) Ion direction: omega < 0
+INFO: (CGYRO) ExB shear: Wavenumber advection
+INFO: (CGYRO) Time integrator: Cash-Karp 6:5(4) [adaptive]
+INFO: (CGYRO) Using gyrokinetic electrons
+INFO: (CGYRO) Profile model: local input (input.cgyro)
+INFO: (CGYRO) Equilibrium: Miller Extended Harmonic (MXH)
+INFO: (CGYRO) Transverse EM fluctuations (Phi,A_par)
+INFO: (CGYRO) Rotation terms: O(mach) only (traditional GYRO)
+INFO: (CGYRO) Collision model: Sugama
+INFO: (CGYRO) Collision terms: L D Rm Re kp ions field
+INFO: (CGYRO)                  x x x  x  x   x     x
+ 
+ n_theta | n_species | n_energy | n_xi 
+    32         3          8        24
+ 
+ nc_loc | nv_loc | nsplit | n_jtheta | n_MPI | n_OMP
+  2560       96      768          8       24   32
+ 
+           n    Delta      Max     L/rho    n_fft
+ kx*rho: 480    0.063   15.017    100.00      720  2(4)3(2)5(1)
+ ky*rho:  48    0.080    3.760     78.54      144  2(4)3(2)
+ 
+  D-theta:  6    D-radial:  6    D-alpha:  6   [dissipation order]
+ up_theta: 1.0  up_radial: 1.0  up_alpha: 0.0  [dissipation strength]
+ C(theta): 0.4
+ 
+  r/a  0.50000   R/a  3.00000   q  2.00000   zmag  0.00000    kappa  1.00000
+               shift  0.00000   s  1.00000  dzmag  0.00000  s_kappa  0.00000
+ 
+  c1  0.00000   s_c1  0.00000   delta  0.00000  s_delta  0.00000
+  c2  0.00000   s_c2  0.00000    zeta  0.00000   s_zeta  0.00000
+ 
+ gamma_e:  1.657E-01  gamma_p: -1.842E+00    mach: -4.070E-02  [rho/a]:  2.000E-02
+   betae:  1.000E-03   beta_*:  8.000E-03  lamb_*:  0.000E+00  [z_eff]:  1.000E+00
+ 
+ i  z  n/n_norm   T/T_norm   m/m_norm     a/Ln       a/Lt       nu
+ 1  1  9.000E-01  1.000E+00  1.000E+00  1.000E+00  3.000E+00  4.025E-03
+ 2 -1  1.000E+00  1.000E+00  2.000E-03  1.000E+00  3.000E+00  1.000E-01
+ 3  1  1.000E-01  1.000E+00  1.000E+00  1.000E+00  3.000E+00  4.472E-04
+ 
+INFO: (CGYRO) GPU-aware code triggered.
+INFO: (CGYRO) NL using FFT batching of   768,  384 and   384                                                                                  
+EXIT: (CGYRO) Normal

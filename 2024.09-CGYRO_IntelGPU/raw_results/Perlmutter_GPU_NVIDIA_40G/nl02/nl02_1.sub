@@ -1,0 +1,15 @@
+#!/bin/bash
+#SBATCH -J nl02_1           # Job name
+#SBATCH -o nl02_1.o%j       # Name of stdout output file
+#SBATCH -e nl02_1.e%j       # Name of stderr error file
+#SBATCH -q debug      # Queue (partition) name
+#SBATCH -n 4             # Total # of mpi tasks
+#SBATCH -c 32
+#SBATCH -t 00:30:00        # Run time (hh:mm:ss)
+#SBATCH -A mp94_g    # Allocation name (req'd if you have more than 1)
+#SBATCH -C gpu
+#SBATCH --gpus-per-node=4
+export SLURM_CPU_BIND="cores"
+
+cgyro -e t16_1_gpu1 -n 4 -nomp 32 -p /pscratch/sd/i/isucsd/n1/nl02
+
