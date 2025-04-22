@@ -1,0 +1,10 @@
+SHARE_CMAT = 1
+N_DIRS = 8
+DIR_1 = nl03c_s1
+DIR_2 = nl03c_s2
+DIR_3 = nl03c_s3
+DIR_4 = nl03c_s4
+DIR_5 = nl03c_s5
+DIR_6 = nl03c_s6
+DIR_7 = nl03c_s7
+DIR_8 = nl03c_s8
