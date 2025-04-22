@@ -1,0 +1,10 @@
+SHARE_CMAT = 1
+N_DIRS = 8
+DIR_1 = t1
+DIR_2 = t2
+DIR_3 = t3
+DIR_4 = t4
+DIR_5 = t5
+DIR_6 = t6
+DIR_7 = t7
+DIR_8 = t8

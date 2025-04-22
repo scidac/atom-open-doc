@@ -1,0 +1,5 @@
+#!/bin/bash -l
+#SBATCH -J n3_128_x8d
+#SBATCH -N 128
+xgyro -n 1024 -nomp 7
+

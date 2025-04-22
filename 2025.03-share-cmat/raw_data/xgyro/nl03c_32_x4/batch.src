@@ -1,0 +1,5 @@
+#!/bin/bash -l
+#SBATCH -J n3_32_x4d
+#SBATCH -N 32
+xgyro -n 256 -nomp 7
+

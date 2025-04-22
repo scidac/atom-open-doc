@@ -1,0 +1,4 @@
+#!/bin/bash 
+#SBATCH -J n3_64
+#SBATCH -N 64
+cgyro -n 512 -nomp 7
